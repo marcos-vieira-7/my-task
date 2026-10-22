@@ -1,14 +1,26 @@
 
 import { useState } from "react";
+import "./styles/global.css";
+
+import Menu from "./components/Menu";
+import Dashboard from "./pages/Dashboard";
+import Alunos from "./pages/Alunos";
+import Turmas from "./pages/Turmas";
+
 import TurmaForm from "./components/TurmaForm";
 import TurmaList from "./components/TurmaList";
 import AlunoForm from "./components/AlunoForm";
 import AlunoList from "./components/AlunoList";
 
-export default function App() {
+import DetalhesTurma from "./pages/DetalhesTurma";
 
+export default function App() {
+  
+  const [paginaAtual, setPaginaAtual] = useState("dashboard");
   const [alunos, setAlunos] = useState([]);
   const [turmas, setTurmas] = useState([]);
+  const [turmaSelecionada, setTurmaSelecionada] = useState(null);
+  const [matriculas, setMatriculas] = useState([]);
 
   function adicionarAluno(novoAluno) {
     setAlunos((atuais) => [...atuais, novoAluno]);
@@ -21,44 +33,82 @@ export default function App() {
     ]);
   }
 
-  return (
-    <main className="app-container">
-      <header className="page-header">
-        <h1 className="page-title">Gestão de turmas</h1>
-        <p className="page-description">
-          Gerencie seus alunos e organize suas turmas.
-        </p>
-      </header>
+  function adicionarAlunoNaTurma(turmaId, alunoId) {
+    setMatriculas((atuais) => {
+      const jaMatriculado = atuais.some(
+        (item) =>
+          item.turmaId === turmaId &&
+          item.alunoId === alunoId
+      );
 
-      <section>
-        <AlunoForm onAdicionarAluno={adicionarAluno} />
+      if (jaMatriculado) return atuais;
 
-        <div className="section-spacing">
-          <h2 className="card-title">
-            Alunos cadastrados ({alunos.length})
-          </h2>
+      return [...atuais, { turmaId, alunoId }];
+    });
+  }
 
-          <AlunoList alunos={alunos} />
-        </div>
-      </section>
+  function abrirTurma(id) {
+    const turma = turmas.find((item) => item.id === id);
+    setTurmaSelecionada(turma);
+  }
 
-      <section className="section-spacing">
-        <TurmaForm onAdicionarTurma={adicionarTurma} />
-
-        <div className="section-spacing">
-          <h2 className="card-title">
-            Turmas cadastradas ({turmas.length})
-          </h2>
-
-          <TurmaList
-            turmas={turmas}
-            onSelecionarTurma={(id) =>
-              console.log("Turma selecionada:", id)
-            }
+  function renderizarPagina() {
+    
+    if (turmaSelecionada) {
+      return (
+        <DetalhesTurma
+          turma={turmaSelecionada}
+          alunos={alunos}
+          matriculas={matriculas}
+          onAdicionarAluno={adicionarAlunoNaTurma}
+          onVoltar={() => setTurmaSelecionada(null)}
+        />
+      );
+    }
+    switch (paginaAtual) {
+      case "alunos":
+        return (
+          <Alunos
+            alunos={alunos}
+            onAdicionarAluno={adicionarAluno}
           />
-        </div>
-      </section>
+        );
 
-    </main>
+      case "turmas":
+        return (
+          <Turmas
+            turmas={turmas}
+            onAdicionarTurma={adicionarTurma}
+            onSelecionarTurma={abrirTurma}
+          />
+        );
+
+      default:
+        return (
+          <Dashboard alunos={alunos} turmas={turmas} />
+        );
+    }
+  }
+
+
+  return (
+    <div className="app-shell">
+      <aside className="sidebar">
+        <div className="brand">
+          <span className="brand-icon">G</span>
+          <span>Gestão de Turmas</span>
+        </div>
+
+        <Menu
+          paginaAtual={paginaAtual}
+          onNavegar={setPaginaAtual}
+        />
+      </aside>
+
+      <main className="main-content">
+        {renderizarPagina()}
+      </main>
+    </div>
   );
+  
 }

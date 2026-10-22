@@ -1,6 +1,6 @@
 
 
-export default function TurmaList({ turmas }) {
+export default function TurmaList({ turmas, onSelecionarTurma }) {
   
   //renderiza uma mensagem caso não haja turmas cadastradas
   if (turmas.length === 0) {
@@ -23,9 +23,11 @@ export default function TurmaList({ turmas }) {
             </p>
           </div>
 
-          <span className="text-muted">
-            <small>Turma</small>
-          </span>
+          <button
+            className="btn btn-secondary"
+            onClick={() => onSelecionarTurma(turma.id)}>
+            Abrir turma →
+          </button>
         </article>
       ))}
     </div>
