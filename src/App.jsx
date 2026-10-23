@@ -25,6 +25,26 @@ export default function App() {
   function adicionarAluno(novoAluno) {
     setAlunos((atuais) => [...atuais, novoAluno]);
   }
+
+  function editarAluno(id, dadosAtualizados) {
+    setAlunos((atuais) =>
+      atuais.map((aluno) =>
+        aluno.id === id
+          ? { ...aluno, ...dadosAtualizados }
+          : aluno
+      )
+    );
+  }
+
+  function excluirAluno(id) {
+    setAlunos((atuais) =>
+      atuais.filter((aluno) => aluno.id !== id)
+    );
+
+    setMatriculas((atuais) =>
+      atuais.filter((matricula) => matricula.alunoId !== id)
+    );
+  }
   
   function adicionarTurma(novaTurma) {
     setTurmas((turmasAtuais) => [
@@ -33,7 +53,32 @@ export default function App() {
     ]);
   }
 
+  function editarTurma(id, dadosAtualizados) {
+    setTurmas((atuais) =>
+      atuais.map((turma) =>
+        turma.id === id
+          ? { ...turma, ...dadosAtualizados }
+          : turma
+      )
+    );
+  }
+
+  function excluirTurma(id) {
+    setTurmas((atuais) =>
+      atuais.filter((turma) => turma.id !== id)
+    );
+
+    setMatriculas((atuais) =>
+      atuais.filter((matricula) => matricula.turmaId !== id)
+    );
+
+    if (turmaSelecionada?.id === id) {
+      setTurmaSelecionada(null);
+    }
+  }
+
   function adicionarAlunoNaTurma(turmaId, alunoId) {
+    //checa se o aluno já está matriculado na turma antes de adicionar
     setMatriculas((atuais) => {
       const jaMatriculado = atuais.some(
         (item) =>
@@ -71,6 +116,8 @@ export default function App() {
           <Alunos
             alunos={alunos}
             onAdicionarAluno={adicionarAluno}
+            onEditarAluno={editarAluno}
+            onExcluirAluno={excluirAluno}
           />
         );
 
@@ -80,6 +127,8 @@ export default function App() {
             turmas={turmas}
             onAdicionarTurma={adicionarTurma}
             onSelecionarTurma={abrirTurma}
+            onEditarTurma={editarTurma}
+            onExcluirTurma={excluirTurma}
           />
         );
 

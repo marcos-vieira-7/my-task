@@ -6,6 +6,8 @@ export default function Turmas({
   turmas,
   onAdicionarTurma,
   onSelecionarTurma,
+  onEditarTurma,
+  onExcluirTurma,
 }) {
   return (
     <>
@@ -26,6 +28,8 @@ export default function Turmas({
         <TurmaList
           turmas={turmas}
           onSelecionarTurma={onSelecionarTurma}
+          onEditarTurma={onEditarTurma}
+          onExcluirTurma={onExcluirTurma}
         />
       </section>
     </>

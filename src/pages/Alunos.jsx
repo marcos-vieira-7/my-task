@@ -2,7 +2,7 @@
 import AlunoForm from "../components/AlunoForm";
 import AlunoList from "../components/AlunoList";
 
-export default function Alunos({ alunos, onAdicionarAluno }) {
+export default function Alunos({ alunos, onAdicionarAluno, onEditarAluno, onExcluirAluno }) {
   return (
     <>
       <header className="page-header">
@@ -18,7 +18,13 @@ export default function Alunos({ alunos, onAdicionarAluno }) {
         <h2 className="card-title">
           Todos os alunos ({alunos.length})
         </h2>
-        <AlunoList alunos={alunos} />
+        
+        <AlunoList 
+          alunos={alunos}
+          onEditarAluno={onEditarAluno}
+          onExcluirAluno={onExcluirAluno}
+        />
+
       </section>
     </>
   );

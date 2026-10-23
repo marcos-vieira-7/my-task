@@ -1,11 +1,30 @@
 
+import { useState } from "react";
 
-export default function AlunoList({ alunos }) {
+function AlunoList({ alunos, onEditarAluno, onExcluirAluno }) {
+  const [alunoEditandoId, setAlunoEditandoId] = useState(null);
+  const [nomeEditado, setNomeEditado] = useState("");
+
+  function iniciarEdicao(aluno) {
+    setAlunoEditandoId(aluno.id);
+    setNomeEditado(aluno.nome);
+  }
+
+  function salvarEdicao(id) {
+    const nome = nomeEditado.trim();
+
+    if (!nome) return;
+
+    onEditarAluno(id, { nome });
+    setAlunoEditandoId(null);
+    setNomeEditado("");
+  }
+
   if (alunos.length === 0) {
     return (
-      <div className="empty-state">
-        Nenhum aluno cadastrado.
-      </div>
+      <p className="empty-state">
+        Nenhum aluno cadastrado ainda.
+      </p>
     );
   }
 
@@ -13,25 +32,71 @@ export default function AlunoList({ alunos }) {
     <div className="list">
       {alunos.map((aluno) => (
         <article className="list-item" key={aluno.id}>
-          <div className="student-info">
-            <div className="student-avatar">
-              {aluno.nome.charAt(0).toUpperCase()}
-            </div>
+          {alunoEditandoId === aluno.id ? (
+            <div className="form-group">
+              <label className="form-label">
+                Nome do aluno
+              </label>
 
-            <div>
-              <h3 className="list-item-title">
-                {aluno.nome}
-              </h3>
+              <input
+                className="form-input"
+                value={nomeEditado}
+                onChange={(evento) =>
+                  setNomeEditado(evento.target.value)
+                }
+              />
 
-              <p className="text-muted">
-                {aluno.ativo ? "Aluno ativo" : "Aluno inativo"}
-              </p>
+              <button
+                className="btn btn-primary"
+                onClick={() => salvarEdicao(aluno.id)}
+              >
+                Salvar
+              </button>
+
+              <button
+                className="btn btn-secondary"
+                onClick={() => setAlunoEditandoId(null)}
+              >
+                Cancelar
+              </button>
             </div>
-          </div>
+          ) : (
+            <>
+              <div>
+                <h3 className="list-item-title">
+                  {aluno.nome}
+                </h3>
+              </div>
+
+              <div>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => iniciarEdicao(aluno)}
+                >
+                  Editar
+                </button>
+
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    if (
+                      window.confirm(
+                        `Deseja excluir o aluno ${aluno.nome}?`
+                      )
+                    ) {
+                      onExcluirAluno(aluno.id);
+                    }
+                  }}
+                >
+                  Excluir
+                </button>
+              </div>
+            </>
+          )}
         </article>
       ))}
     </div>
   );
 }
 
-
+export default AlunoList;
