@@ -77,7 +77,7 @@ export default function TurmaList({
                 </p>
               </div>
 
-              <div>
+              <div className="turma-actions">
                 <button
                   className="btn btn-secondary"
                   onClick={() => onSelecionarTurma(turma.id)}

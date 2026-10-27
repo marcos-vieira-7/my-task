@@ -68,7 +68,7 @@ function AlunoList({ alunos, onEditarAluno, onExcluirAluno }) {
                 </h3>
               </div>
 
-              <div>
+              <div className="turma-actions">
                 <button
                   className="btn btn-secondary"
                   onClick={() => iniciarEdicao(aluno)}

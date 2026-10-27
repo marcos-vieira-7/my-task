@@ -22,6 +22,19 @@ export default function App() {
   const [turmaSelecionada, setTurmaSelecionada] = useState(null);
   const [matriculas, setMatriculas] = useState([]);
 
+
+  function removerAlunoDaTurma(turmaId, alunoId) {
+    setMatriculas((atuais) =>
+      atuais.filter(
+        (matricula) =>
+          !(
+            matricula.turmaId === turmaId &&
+            matricula.alunoId === alunoId
+          )
+      )
+    );
+  }
+
   function adicionarAluno(novoAluno) {
     setAlunos((atuais) => [...atuais, novoAluno]);
   }
@@ -97,6 +110,11 @@ export default function App() {
     setTurmaSelecionada(turma);
   }
 
+  function navegarParaPagina(id) {
+    setTurmaSelecionada(null);
+    setPaginaAtual(id);
+  }
+
   function renderizarPagina() {
     
     if (turmaSelecionada) {
@@ -106,6 +124,7 @@ export default function App() {
           alunos={alunos}
           matriculas={matriculas}
           onAdicionarAluno={adicionarAlunoNaTurma}
+          onRemoverAluno={removerAlunoDaTurma}
           onVoltar={() => setTurmaSelecionada(null)}
         />
       );
@@ -150,7 +169,7 @@ export default function App() {
 
         <Menu
           paginaAtual={paginaAtual}
-          onNavegar={setPaginaAtual}
+          onNavegar={navegarParaPagina}
         />
       </aside>
 

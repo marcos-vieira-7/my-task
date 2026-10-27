@@ -325,3 +325,10 @@ button {
     grid-template-columns: 1fr;
   }
 }
+
+.turma-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}

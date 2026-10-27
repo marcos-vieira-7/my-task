@@ -6,6 +6,7 @@ export default function DetalhesTurma({
   alunos,
   matriculas,
   onAdicionarAluno,
+  onRemoverAluno,
   onVoltar,
 }) {
   const [alunoSelecionadoId, setAlunoSelecionadoId] = useState("");
@@ -106,6 +107,21 @@ export default function DetalhesTurma({
                 <h3 className="list-item-title">
                   {aluno.nome}
                 </h3>
+
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    if (
+                      window.confirm(
+                        `Deseja remover ${aluno.nome} desta turma?`
+                      )
+                    ) {
+                      onRemoverAluno(turma.id, aluno.id);
+                    }
+                  }}>
+                  Remover da turma
+                </button>
+
               </article>
             ))}
           </div>
