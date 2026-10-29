@@ -1,6 +1,7 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./styles/global.css";
+import { carregarDados, salvarDados } from "./utils/storage";
 
 import Menu from "./components/Menu";
 import Dashboard from "./pages/Dashboard";
@@ -17,10 +18,31 @@ import DetalhesTurma from "./pages/DetalhesTurma";
 export default function App() {
   
   const [paginaAtual, setPaginaAtual] = useState("dashboard");
-  const [alunos, setAlunos] = useState([]);
-  const [turmas, setTurmas] = useState([]);
+
+  const [alunos, setAlunos] = useState(
+    () => carregarDados("alunos")
+  );
+  const [turmas, setTurmas] = useState(
+    () => carregarDados("turmas")
+  );
+  const [matriculas, setMatriculas] = useState(
+    () => carregarDados("matriculas")
+  );
+
   const [turmaSelecionada, setTurmaSelecionada] = useState(null);
-  const [matriculas, setMatriculas] = useState([]);
+
+  
+  useEffect(() => {
+    salvarDados("alunos", alunos);
+  }, [alunos]);
+
+  useEffect(() => {
+    salvarDados("turmas", turmas);
+  }, [turmas]);
+
+  useEffect(() => {
+    salvarDados("matriculas", matriculas);
+  }, [matriculas]);
 
 
   function removerAlunoDaTurma(turmaId, alunoId) {
