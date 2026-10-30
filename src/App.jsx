@@ -14,6 +14,7 @@ import AlunoForm from "./components/AlunoForm";
 import AlunoList from "./components/AlunoList";
 
 import DetalhesTurma from "./pages/DetalhesTurma";
+import ChamadaAula from "./pages/ChamadaAula";
 
 export default function App() {
   
@@ -29,8 +30,15 @@ export default function App() {
     () => carregarDados("matriculas")
   );
 
-  const [turmaSelecionada, setTurmaSelecionada] = useState(null);
+  const [aulas, setAulas] = useState(
+  () => carregarDados("aulas")
+  );
+  const [presencas, setPresencas] = useState(
+    () => carregarDados("presencas")
+  );
 
+  const [turmaSelecionada, setTurmaSelecionada] = useState(null);
+  const [aulaSelecionada, setAulaSelecionada] = useState(null);
   
   useEffect(() => {
     salvarDados("alunos", alunos);
@@ -43,6 +51,14 @@ export default function App() {
   useEffect(() => {
     salvarDados("matriculas", matriculas);
   }, [matriculas]);
+
+  useEffect(() => {
+    salvarDados("aulas", aulas);
+  }, [aulas]);
+
+  useEffect(() => {
+    salvarDados("presencas", presencas);
+  }, [presencas]);
 
 
   function removerAlunoDaTurma(turmaId, alunoId) {
@@ -132,13 +148,61 @@ export default function App() {
     setTurmaSelecionada(turma);
   }
 
+  function adicionarAula(turmaId, data) {
+    const novaAula = {
+      id: crypto.randomUUID(),
+      turmaId,
+      data,
+    };
+
+    setAulas((atuais) => [...atuais, novaAula]);
+  }
+
   function navegarParaPagina(id) {
     setTurmaSelecionada(null);
     setPaginaAtual(id);
   }
 
+  function salvarPresencas(aulaId, listaPresenca) {
+    setPresencas((atuais) => {
+      const outrasPresencas = atuais.filter(
+        (item) => item.aulaId !== aulaId
+      );
+
+      const novasPresencas = listaPresenca.map((item) => ({
+        aulaId,
+        alunoId: item.alunoId,
+        presente: item.presente,
+      }));
+
+      return [...outrasPresencas, ...novasPresencas];
+    });
+  }
+
   function renderizarPagina() {
     
+    if (aulaSelecionada) {
+      const matriculasDaTurma = matriculas.filter(
+        (item) => item.turmaId === aulaSelecionada.turmaId
+      );
+
+      const alunosDaTurma = alunos.filter((aluno) =>
+        matriculasDaTurma.some(
+          (matricula) => matricula.alunoId === aluno.id
+        )
+      );
+
+      return (
+        <ChamadaAula
+          aula={aulaSelecionada}
+          alunos={alunosDaTurma}
+          presencas={presencas}
+          onSalvarPresencas={salvarPresencas}
+          onVoltar={() => setAulaSelecionada(null)}
+        />
+      );
+    }
+
     if (turmaSelecionada) {
       return (
         <DetalhesTurma
@@ -148,6 +212,9 @@ export default function App() {
           onAdicionarAluno={adicionarAlunoNaTurma}
           onRemoverAluno={removerAlunoDaTurma}
           onVoltar={() => setTurmaSelecionada(null)}
+          aulas={aulas}
+          onAdicionarAula={adicionarAula}
+          onAbrirAula={(aula) => setAulaSelecionada(aula)}
         />
       );
     }

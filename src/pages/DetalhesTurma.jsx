@@ -1,4 +1,5 @@
 import { useState } from "react";
+import AulaForm from "../components/AulaForm";
 
 
 export default function DetalhesTurma({
@@ -7,7 +8,10 @@ export default function DetalhesTurma({
   matriculas,
   onAdicionarAluno,
   onRemoverAluno,
+  aulas,
+  onAdicionarAula,
   onVoltar,
+  onAbrirAula,
 }) {
   const [alunoSelecionadoId, setAlunoSelecionadoId] = useState("");
 
@@ -48,6 +52,45 @@ export default function DetalhesTurma({
         </p>
       </header>
 
+      <AulaForm
+        turmaId={turma.id}
+        onAdicionarAula={onAdicionarAula}
+      />
+
+      <section className="section-spacing">
+        <h2 className="card-title">
+          Aulas registradas (
+          {aulas.filter((aula) => aula.turmaId === turma.id).length}
+          )
+        </h2>
+
+        {aulas.filter((aula) => aula.turmaId === turma.id).length === 0 ? (
+          <p className="empty-state">
+            Nenhuma aula registrada ainda.
+          </p>
+        ) : (
+          <div className="list">
+            {aulas
+              .filter((aula) => aula.turmaId === turma.id)
+              .sort((a, b) => b.data.localeCompare(a.data))
+              .map((aula) => (
+                <article className="list-item" key={aula.id}>
+                  <h3 className="list-item-title">
+                    Aula de{" "}
+                    {new Date(`${aula.data}T00:00:00`).toLocaleDateString("pt-BR")}
+                  </h3>
+
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => onAbrirAula(aula)} >
+                    Fazer chamada
+                  </button>
+                </article>
+              ))}
+          </div>
+        )}
+      </section>
+        &nbsp;
       <section className="card">
         <h2 className="card-title">Adicionar aluno</h2>
 
