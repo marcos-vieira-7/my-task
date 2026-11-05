@@ -9,6 +9,7 @@ export default function DetalhesTurma({
   onAdicionarAluno,
   onRemoverAluno,
   aulas,
+  presencas,
   onAdicionarAula,
   onVoltar,
   onAbrirAula,
@@ -26,6 +27,39 @@ export default function DetalhesTurma({
   const alunosDisponiveis = alunos.filter(
     (aluno) => !idsMatriculados.includes(aluno.id)
   );
+
+  const aulasDaTurma = aulas.filter(
+    (aula) => aula.turmaId === turma.id
+  );
+
+  const resumoFrequencia = alunosMatriculados.map((aluno) => {
+    const registros = presencas.filter((registro) =>
+      registro.alunoId === aluno.id &&
+      aulasDaTurma.some((aula) => aula.id === registro.aulaId)
+    );
+
+    const totalPresencas = registros.filter(
+      (registro) => registro.presente
+    ).length;
+
+    const totalFaltas = registros.filter(
+      (registro) => !registro.presente
+    ).length;
+
+    const totalChamadas = registros.length;
+
+    const frequencia = totalChamadas > 0
+      ? Math.round((totalPresencas / totalChamadas) * 100)
+      : null;
+
+    return {
+      aluno,
+      totalPresencas,
+      totalFaltas,
+      frequencia,
+    };
+  });
+
 
   function handleSubmit(evento) {
     evento.preventDefault();
@@ -131,6 +165,39 @@ export default function DetalhesTurma({
               Adicionar à turma
             </button>
           </form>
+        )}
+      </section>
+
+      <section className="card">
+        <h2 className="card-title">Frequência dos alunos</h2>
+
+        {resumoFrequencia.length === 0 ? (
+          <p className="empty-state">
+            Não há alunos matriculados nesta turma.
+          </p>
+        ) : (
+          <div className="list">
+            {resumoFrequencia.map((item) => (
+              <article className="list-item" key={item.aluno.id}>
+                <div>
+                  <h3 className="list-item-title">
+                    {item.aluno.nome}
+                  </h3>
+
+                  <p className="text-muted">
+                    {item.totalPresencas} presenças ·{" "}
+                    {item.totalFaltas} faltas
+                  </p>
+                </div>
+
+                <strong>
+                  {item.frequencia !== null
+                    ? `${item.frequencia}%`
+                    : "Sem dados"}
+                </strong>
+              </article>
+            ))}
+          </div>
         )}
       </section>
 

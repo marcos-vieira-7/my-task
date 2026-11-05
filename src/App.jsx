@@ -213,6 +213,7 @@ export default function App() {
           onRemoverAluno={removerAlunoDaTurma}
           onVoltar={() => setTurmaSelecionada(null)}
           aulas={aulas}
+          presencas={presencas}
           onAdicionarAula={adicionarAula}
           onAbrirAula={(aula) => setAulaSelecionada(aula)}
         />
